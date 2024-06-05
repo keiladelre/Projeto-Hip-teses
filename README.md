@@ -19,7 +19,7 @@ A gravadora levantou uma série de hipóteses sobre o que faz uma música seja m
 
 ## Base de dados utilizada:
 
-[https://drive.google.com/file/d/11W1wfljCoRKy1Uk5R65LHWmh2mtCtMGV/view)
+https://drive.google.com/file/d/11W1wfljCoRKy1Uk5R65LHWmh2mtCtMGV/view
 
 ## 1.Pré
 
@@ -518,5 +518,5 @@ FROM `projeto-2-hipoteses-420502.Spotify.tabela_artista_solo`
 
 ## Link para apresentação mo Power BI:
 
-[https://app.powerbi.com/view?r=eyJrIjoiZjUyNTY3MjktMmNhYi00NzAyLTk3OTAtNTZlNmI4MmQzNDJjIiwidCI6IjY4NDI4ODMyLTQzMzctNDc1Ny1hZGM3LThjYWRjYjcwNzNmMyJ9)
+https://app.powerbi.com/view?r=eyJrIjoiZjUyNTY3MjktMmNhYi00NzAyLTk3OTAtNTZlNmI4MmQzNDJjIiwidCI6IjY4NDI4ODMyLTQzMzctNDc1Ny1hZGM3LThjYWRjYjcwNzNmMyJ9
 
