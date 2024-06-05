@@ -19,7 +19,7 @@ A gravadora levantou uma série de hipóteses sobre o que faz uma música seja m
 
 ## Base de dados utilizada:
 
-[https://drive.google.com/file/d/11W1wfljCoRKy1Uk5R65LHWmh2mtCtMGV/view]
+[https://drive.google.com/file/d/11W1wfljCoRKy1Uk5R65LHWmh2mtCtMGV/view)
 
 ## 1.Pré
 
@@ -199,7 +199,7 @@ SELECT *,
 track_name,
   REGEXP_REPLACE(track_name, r'[^\w\s]', '') AS track_name_1
 FROM
-  `projeto-2-hipoteses-420502.Spotify.track_in_spotify`
+  `projeto-2-hipoteses-420502.Spotify.Powerbi_corrigida`
 ```
 ### 2.6-Identificar e tratar dados discrepantes em variáveis numéricas
 
@@ -210,15 +210,15 @@ SELECT
   MAX (streams),
   MIN (streams),
 FROM
-  `projeto-2-hipoteses-420502.Spotify.track_in_spotify`
+  `projeto-2-hipoteses-420502.Spotify.Powerbi_corrigida`
 ```
 2.6.2- Para alterar a coluna streams para numérica e corrigir caso algum campo seja string, pesquisei um comando para filtrar esses casos e trazer somente registros onde a coluan streams seja numerica, após isso foi alterado o tipo da coluna de String para Integer
 
 ```sql
 SELECT *,
-   CAST(ts.streams AS INT64) AS streams_1
+   CAST(streams AS INT64) AS streams_1
 FROM
-  `projeto-2-hipoteses-420502.Spotify.track_in_spotify`
+  `projeto-2-hipoteses-420502.Spotify.Powerbi_corrigida`
 WHERE REGEXP_CONTAINS(ts.streams, r'^\d+$');
 ```
 
@@ -227,7 +227,7 @@ WHERE REGEXP_CONTAINS(ts.streams, r'^\d+$');
 ```sql
 CREATE OR REPLACE TABLE  `projeto-2-hipoteses-420502.Spotify.Powerbi_corrigida` AS
 SELECT *,
-   CAST(ts.streams AS INT64) AS streams_1,
+   CAST(streams AS INT64) AS streams_1,
 FROM
   `projeto-2-hipoteses-420502.Spotify.track_in_spotify`
 WHERE REGEXP_CONTAINS(ts.streams, r'^\d+$');
@@ -240,17 +240,17 @@ WHERE REGEXP_CONTAINS(ts.streams, r'^\d+$');
 SELECT
   DATE(CONCAT(released_year, "-", released_month, "-", released_day)) AS data_completa
 FROM
-  `projeto-2-hipoteses-420502.Spotify.new_track_in_spotify`
+  `projeto-2-hipoteses-420502.Spotify.Powerbi_corrigida`
 ```
 
 2.7.2- Para atualizar a tabela projeto-2-hipoteses-420502.Spotify.Powerbi_corrigida, utilizei o código abaixo:
 
 ```sql
-CREATE OR REPLACE TABLE  `projeto-2-hipoteses-420502.Spotify.new_track_in_spotify` AS
+CREATE OR REPLACE TABLE  `projeto-2-hipoteses-420502.Spotify.Powerbi_corrigida` AS
 SELECT *,
   DATE(CONCAT(released_year, "-", released_month, "-", released_day)) AS data_completa
 FROM
-  `projeto-2-hipoteses-420502.Spotify.new_track_in_spotify`
+  `projeto-2-hipoteses-420502.Spotify.Powerbi_corrigida`
 ```
 ### 2.9- Unir (join) as tabelas de dados
 
@@ -274,7 +274,7 @@ ti.instrumentalness__,
 ti.liveness__,
 ti.speechiness
 FROM      
-  `projeto-2-hipoteses-420502.Spotify.track_in_spotify` ts
+  `projeto-2-hipoteses-420502.Spotify.Powerbi_corrigida` ts
 LEFT JOIN 
   `projeto-2-hipoteses-420502.Spotify.track_in_competition` tc ON tc.track_id = ts.track_id
 LEFT JOIN 
@@ -319,47 +319,29 @@ ORDER BY
 
 3.2.1- Agrupei os dados partindo dos pedidos de análise do case, usando matrizes do Power BI:
 
-- A) Músicas com BPM (Batidas Por Minuto) mais altos fazem mais sucesso em termos de número de streams no Spotify.
-- B) As músicas mais populares no ranking do Spotify também possuem um comportamento semelhante em outras plataformas, como a Deezer.
-- C) A presença de uma música em um maior número de playlists está correlacionada com um maior número de streams.
-- D) Artistas com um maior número de músicas no Spotify têm mais streams.
-- E) As características da música influenciam o sucesso em termos de número de streams no Spotify.
+![Visualizar variáveis categóricas](https://github.com/keiladelre/Projeto-Hip-teses/assets/171286176/b2facf5b-4e09-4f36-a577-cee97d11532a)
 
-3.2.1-Formato das matrizes:
 
-A) BPM x Streams:
+### 3.3. Visualizar variáveis categóricas
 
-![Untitled](./images/04300203-cfba-401b-9e0e-edb7b9688455.png)
+3.3.1- Criei gráficos de barra e linha no Power BI para visualizar as variáveis agrupadas.
 
-B) Charts: spotify/deezer/apple:
+![Gráfico de barras](https://github.com/keiladelre/Projeto-Hip-teses/assets/171286176/6b906fba-148c-49e6-9038-8da8735cb67a)
 
-![Untitled](./images/41016d59-2b39-42f1-8e42-a73b884f9a34.png)
 
-C) Streams x Playlists: 
+### 3.4. Aplicar medidas de tendência central
 
-![Untitled](./images/285e539b-6918-4b77-859c-1589da471d41.png)
+3.4.1- A partir de matrizes, fui criando colunas com a soma, média, e, mediana. Decidi por aplicar as medidas de tendência central nas variáveis: streams, bpm, playlists, charts por artista, e, média de playlists por música. Minha página de matrizes ficou assim:
 
-D)Contagem de músicas x streams: 
+![Medidas de Tendência Central](https://github.com/keiladelre/Projeto-Hip-teses/assets/171286176/80dbb3a0-7e8e-41b4-b6ac-cda13b173aab)
 
-![Untitled](./images/1456f482-c130-42d2-aa39-c2541e2a7d16.png)
 
-### 3.4. Visualizar variáveis categóricas
 
-3.4.1- Criei gráficos de barra e linha no Power BI e visualizei como alguns deles já afirmam ou refutam as hipóteses. Como, alto BPM não garante que uma música tenha mais streams.
+### 3.5. Visualizar a distribuição dos dados
 
-3.4.2- Um pouco das dificuldades com as visualizações: Essa base de dados traz alguns outliers. E tornam os números de streams muito discrepantes. Alguns na casa dos bilhões, outros na casa do milhares. Vejo que é necessário segmentar, para ter visualizações melhores, e comparar artistas com maiores números em suas categorias. 
+3.5.1- Para visualizar a distribuição das variáveis foram usados histogramas; Para usá-los, é preciso instalar e acionar o python.
 
-### 3.5. Aplicar medidas de tendência central
-
-3.5.1- A partir de matrizes, fui criando colunas com a soma, média, e, mediana. Decidi por aplicar as medidas de tendência central nas variáveis: streams, bpm, playlists, charts por artista, e, média de playlists por música. Minha página de matrizes ficou assim:
-
-![Untitled](./images/df783c17-0f63-4f67-bdd6-e02be4e0e785.png)
-
-### 3.6. Visualizar a distribuição dos dados
-
-3.6.1- Para visualizar a distribuição das variáveis foram usados histogramas; Para usá-los, é preciso instalar e acionar o python.
-
-3.6.2- Com python já instalado e acionado no Power BI, criei o histograma para a variávels streams. Utilizando o código no script python no power bi:
+3.5.2- Com python já instalado e acionado no Power BI, criei o histograma para a variávels streams. Utilizando o código no script python no power bi:
 
 ```python
 # O código a seguir para criar um dataframe e remover as linhas duplicadas sempre é executado e age como um preâmbulo para o script: 
@@ -389,16 +371,19 @@ plt.show()
 ```
 
 O histograma ficou assim:
+![Imagem Histograma](https://github.com/keiladelre/Projeto-Hip-teses/assets/171286176/314ac208-54ef-4469-913d-b759d8e0a27a)
 
 
 COLOCAR IMAGEM
 
-### 3.7. Aplicar medidas de dispersão
+### 3.6. Aplicar medidas de dispersão
 
-3.7.1- As medidas de dispersão usadas foram: Desvio padrão e variância. Ambas foram feitas diretamente no Power BI usando tabelas matriz:
+3.6.1- As medidas de dispersão usadas foram: Desvio padrão e variância. Ambas foram feitas diretamente no Power BI usando tabelas matriz:
+
+![Medidas de Dispersão](https://github.com/keiladelre/Projeto-Hip-teses/assets/171286176/9265cd53-3a76-433c-87fc-9cdf94569bcb)
 
 
-3.7.2- Conceitos importantes: 
+3.6.2- Conceitos importantes: 
 
 **Desvio padrão**: O desvio padrão mede a que distância os valores individuais estão da média (média) de um conjunto de dados. Um desvio padrão mais alto indica maior dispersão.
 
@@ -416,15 +401,16 @@ Interpretação do desvio padrão:
 
 4. O desvio padrão é útil para comparar a dispersão entre diferentes conjuntos de dados. Pode ajudar a determinar qual dos dois conjuntos de dados tem maior variabilidade.
 
-### 3.8.Visualizar o comportamento dos dados ao longo do tempo
+### 3.7.Visualizar o comportamento dos dados ao longo do tempo
 
-3.8.1- Usando as ferramentas do Power BI, criei gráfico de linha, com eixo X data_completa_ano e eixo Y soma_streams_1 , e o gráfico  ficou assim:
+3.7.1- Usando as ferramentas do Power BI, criei gráfico de linha, com eixo X data_completa_ano e eixo Y soma_streams_1 , e o gráfico  ficou assim:
 
-COLOCAR IMAGEM
+![Análise ao longo do tempo](https://github.com/keiladelre/Projeto-Hip-teses/assets/171286176/8def38aa-6b78-4bd1-bd29-202ac8f3bd50)
 
-### 3.9. Calcular quartis, decis ou percentis
 
-3.9.1- Decidi fazer passo a passo, criando novas tabelas por quartil e categoria para cada variável:
+### 3.8. Calcular quartis, decis ou percentis
+
+3.8.1- Fiz a tabela temporária em seguida atualizeri a tabela `projeto-2-hipoteses-420502.Spotify.Powerbi_corrigida` com o cálculo dos quartis e categoria alta e baixa:
 
 ```sql
 --criando tabela quartil:streams
@@ -446,85 +432,44 @@ LEFT JOIN Quartile AS q
 ON a.track_id = q.track_id
   
 
---categorizando os quartis:streams
-SELECT
-  streams,
-  quartil_streams,
-  IF(quartil_streams = 4, "alto", IF(quartil_streams = 3, "médio", "baixo")) AS categoria_streams
-FROM `projeto2.quartil_streams`;
 
-```
+### 3.9. Calcular correlação entre variáveis
 
-3.9.2- Depois uni cada uma delas a minha tabela principal nomeada uniao_tabelas:
+3.9.1- Calculei as correlações da variávél streams e demais variáveis relacionadas a posição nas demais plataformas, quantidade de playlists e categorias técnicas das músicas:
 
 ```sql
---unindo tabela de categorias e quartis a tabela uniao_tabelas
-
---unindo quartil_streams e categoria_streams
-CREATE OR REPLACE TABLE `projeto2.uniao_tabelas` AS
+CREATE OR REPLACE TABLE `projeto-2-hipoteses-420502.Spotify.Teste_correlação_streams` AS
 SELECT
-  t1.*,
-  t2.* EXCEPT (streams)
-FROM `projeto2.uniao_tabelas` AS t1
-LEFT JOIN `projeto2.categoria_streams` AS t2
-ON t1.streams = t2.streams;
-
---unindo quartil_bpm e categoria_bpm
-CREATE OR REPLACE TABLE `projeto2.uniao_tabelas` AS
-SELECT
-  t1.*,
-  t2.* EXCEPT (bpm)
-FROM `projeto2.uniao_tabelas` AS t1
-LEFT JOIN `projeto2.categoria_bpm` AS t2
-ON t1.bpm = t2.bpm;
-
---unindo quartil_in_spotify_playlists e categoria_in_spotify_playlists
-CREATE OR REPLACE TABLE `projeto2.uniao_tabelas` AS
-SELECT
-  t1.*,
-  t2.* EXCEPT(in_spotify_playlists)
-FROM `projeto2.uniao_tabelas` AS t1
-LEFT JOIN `projeto2.categoria_in_spotify_playlists` AS t2
-ON t1.in_spotify_playlists = t2.in_spotify_playlists;
-
---unindo quartil_track_count e categoria_track_count
-CREATE OR REPLACE TABLE `projeto2.uniao_tabelas` AS
-SELECT
-  t1.*,
-  t2.* EXCEPT(track_count)
-FROM `projeto2.uniao_tabelas` AS t1
-LEFT JOIN `projeto2.categoria_track_count` AS t2
-ON t1.track_count = t2.track_count;
-
+CORR(streams_1,in_spotify_playlists) AS corr_spotify_playlists,
+CORR(streams_1,in_apple_playlists) AS corr_apple_playlists,
+CORR(streams_1,in_deezer_playlists) AS corr_deezer_playlists,
+CORR(streams_1,in_spotify_charts) AS corr_spotify_charts,
+CORR(streams_1,in_apple_charts) AS corr_apple_charts,
+CORR(streams_1,in_deezer_charts) AS corr_deezer_charts,
+CORR(streams_1,in_shazam_charts) AS corr_shazam_charts,
+CORR(streams_1,danceability__) AS corr_danceability,
+CORR(streams_1,energy__) AS corr_energy,
+CORR(streams_1,bpm) AS corr_bpm,
+CORR(streams_1,valence__) AS corr_valence,
+CORR(streams_1,speechiness__) AS corr_speechiness,
+CORR(streams_1,liveness__) AS corr_liveness,
+CORR(streams_1,instrumentalness__) AS corr_instrumentalness,
+CORR(streams_1,acousticness__) AS corr_acousticness
+FROM `projeto-2-hipoteses-420502.Spotify.Powerbi_corrigida`
 ```
 
-### 3.10. Calcular correlação entre variáveis
-
-3.10.1- Calculei as correlações:
+3.9.2- Calculei as correlações da variávél streams, com o total de músicas por artista solo e atualizei a tabela_artista_solo:
 
 ```sql
--- calculando correlação de pearson
-
+CREATE OR REPLACE TABLE `projeto-2-hipoteses-420502.Spotify.Teste_correlação_streams_músicas_por_artista_solo` AS
 SELECT
-CORR(streams,in_spotify_playlists) AS corr_spotify_playlists,
-CORR(streams,in_spotify_charts) AS corr_spotfy_charts,
-CORR(streams,in_deezer_playlists) AS corr_deezer_playlists,
-CORR(streams,in_deezer_charts) AS corr_deezer_charts,
-CORR(streams,in_apple_playlists) AS corr_apple_playlists,
-CORR(streams,in_apple_charts) AS corr_apple_charts,
-CORR (streams,danceability__) AS corr_danceability,
-CORR(streams,energy__) AS corr_energy,
-CORR(streams,liveness__) AS corr_liveness,
-CORR(streams,bpm) AS corr_bpm,
-CORR(streams,speechiness__) AS corr_speechiness,
-CORR(streams,valence__) AS corr_valence,
-CORR(streams,acousticness__) AS corr_acousticness,
-CORR(streams,instrumentalness__) AS corr_instrumentalness
-FROM `projeto2.uniao_tabelas`;
-
+CORR(total_streams_1,total_tracks) AS corr_total_tracks
+FROM `projeto-2-hipoteses-420502.Spotify.tabela_artista_solo`
 ```
 
-3.10.2- Resultados da correlação de Pearson:
+3.9.3 - Importei a nova tabela Teste_correlação_streams para o Power Bi e utilizei matriz para representar os dados obtidos:
+
+![Teste de correlação](https://github.com/keiladelre/Projeto-Hip-teses/assets/171286176/dacf91d5-62a4-4dda-8882-76ac2d31a0ca)
 
 
 
@@ -534,23 +479,44 @@ FROM `projeto2.uniao_tabelas`;
 
 4.1.1- Para segmentar meus dados pra uma análise, os separei por quartis, especificamente, o quartil de streams. Onde minha base de dados foi segmentada em 4 grupos, de acordo com o número de streams. Sabendo que, o 4 quartil é o que tem o maior número de streams. Minhas matrizes usaram como linha o quartil de 1 a 4, e, como valores, a média das variáveis:
 
+![Segmentação](https://github.com/keiladelre/Projeto-Hip-teses/assets/171286176/8d2b3f9c-4f23-4618-81c5-ec6c8bfb2ba5)
+
+
 ## 4. Conclusões e validação das hipóteses
 
-4.1 - Músicas com BPM (Batidas Por Minuto) mais altos fazem mais sucesso em termos de número de streams no Spotify. Hipótese refutada. Ao realizar os testes, e observar os gráficos de dispersão.
+4.1 - Músicas com BPM (Batidas Por Minuto) mais altos fazem mais sucesso em termos de número de streams no Spotify. Hipótese refutada, após realizar os testes, e observar os gráficos de dispersão.
+
+![Hipótese 1](https://github.com/keiladelre/Projeto-Hip-teses/assets/171286176/769c48d8-24f5-4bde-b8d0-45a4cf13cedd)
 
 
+4.2- As músicas mais populares no ranking do Spotify também possuem um comportamento semelhante em outras plataformas, como a Deezer. Hipótese refutada, comportamentos moderado baixo entre as plataforma.
 
-4.2- As músicas mais populares no ranking do Spotify também possuem um comportamento semelhante em outras plataformas, como a Deezer. Hipótese validada, temos sim comportamentos moderadamente semelhantes entre as plataforma.
-
-
-4.3- A presença de uma música em um maior número de playlists está correlacionada com um maior número de streams. Sim, hipotése validada. São 
+![Hipótese 2](https://github.com/keiladelre/Projeto-Hip-teses/assets/171286176/6da84ea0-aa04-4e60-99fa-0c1b20e7e14d)
 
 
+4.3- A presença de uma música em um maior número de playlists está correlacionada com um maior número de streams. Sim, hipotése validada.
 
-4.4- Artistas com um maior número de músicas no Spotify têm mais streams. Hipótese refutada. Além disso, artistas com streams tem músicas que alcançam mais números de streams do que artistas com grande número de músicas.
+![Hipótese 3](https://github.com/keiladelre/Projeto-Hip-teses/assets/171286176/e4a2194d-52d8-4e3d-ab58-7c9b4bdfea20)
 
+
+4.4- Artistas com um maior número de músicas no Spotify têm mais streams. Hipótese validada. 
+
+![Hipótese 4](https://github.com/keiladelre/Projeto-Hip-teses/assets/171286176/c5b098be-aa15-40b4-834b-a014cdf9e528)
 
 
 4.5- As características da música influenciam o sucesso em termos de número de streams no Spotify. Hipótese refutada. Os cálculos e gráficos mostram que não há correlação.
 
+![Hipótese 5](https://github.com/keiladelre/Projeto-Hip-teses/assets/171286176/b05842fe-7629-4215-96a2-a8315f307550)
+
+4.6 Observações Finais.
+
+![Conclusão 1](https://github.com/keiladelre/Projeto-Hip-teses/assets/171286176/a516c1c5-5c60-4218-9ad8-48d892d257d4)
+
+![Conclusão 2](https://github.com/keiladelre/Projeto-Hip-teses/assets/171286176/12c29446-22e1-488a-a077-92cb706f6146)
+
+![Conclusão 3](https://github.com/keiladelre/Projeto-Hip-teses/assets/171286176/244c1eea-1c6e-4b7f-afa6-8dca15bc4c8b)
+
+## Link para apresentação mo Power BI:
+
+[https://app.powerbi.com/view?r=eyJrIjoiZjUyNTY3MjktMmNhYi00NzAyLTk3OTAtNTZlNmI4MmQzNDJjIiwidCI6IjY4NDI4ODMyLTQzMzctNDc1Ny1hZGM3LThjYWRjYjcwNzNmMyJ9)
 
